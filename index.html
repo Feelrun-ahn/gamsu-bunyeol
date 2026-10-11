@@ -1,124 +1,102 @@
 <!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>MEIOSIS LAB — 감수 분열 시뮬레이터</title>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>MEIOSIS LAB 2 — 감수 분열 시뮬레이터</title>
 <style>
-:root{color-scheme:dark;--bg:#07111f;--panel:#0d1b2b;--line:#24374c;--text:#eaf2fb;--muted:#94a9bf;--blue:#5ba7ff;--red:#ff6b83;--green:#4bd6a0;--gold:#ffc857;--purple:#bd9cff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#183454 0%,var(--bg) 55%);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text)}button,input{font:inherit}button{color:var(--text);background:#14263a;border:1px solid #30465e;border-radius:12px;padding:10px 14px;cursor:pointer}button:hover{background:#1b3550}button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}.wrap{max-width:1400px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:16px}.eyebrow{font-size:11px;letter-spacing:.2em;color:var(--blue);font-weight:800}.top h1{font-size:clamp(25px,4vw,42px);line-height:1.1;margin:5px 0}.sub{color:var(--muted);margin:8px 0 0}.pill{border:1px solid #2d4965;border-radius:999px;padding:7px 12px;color:#b9d9ff;font-size:12px;white-space:nowrap}.layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px}.panel{background:linear-gradient(145deg,#0e1d2e,#0a1726);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 18px 60px #0002}.stagehead{display:flex;justify-content:space-between;gap:12px;padding:17px 20px 0;align-items:flex-start}.stagehead h2{font-size:21px;margin:0}.stagehead p{margin:4px 0;color:var(--muted);font-size:13px}.counter{color:var(--blue);font-size:12px;font-weight:800}.scene{width:100%;display:block;aspect-ratio:1.5;background:radial-gradient(ellipse at center,#122840 0%,#0a1726 68%)}svg{width:100%;height:100%;display:block}.legend{display:flex;flex-wrap:wrap;gap:10px;padding:0 20px 16px;color:var(--muted);font-size:12px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.controls{padding:16px 20px;border-top:1px solid var(--line)}.buttons{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.primary{background:#236bc2;border-color:#3988e7;font-weight:750}.primary:hover{background:#2d7ddd}.range{width:100%;accent-color:var(--blue);margin:15px 0 3px}.timeinfo{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}.stagebuttons{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:14px}.stagebuttons button{font-size:12px;padding:9px 5px}.stagebuttons button.active{border-color:var(--blue);background:#173b5f;color:#dceeff}.side{padding:18px;display:flex;flex-direction:column;gap:15px}.side h3{margin:0 0 5px;font-size:16px}.side p{margin:0;color:#b8c8d8;font-size:13px}.fact{border:1px solid #243a50;background:#0b1928;border-radius:14px;padding:13px}.fact strong{display:block;color:#e7f2ff;margin-bottom:4px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{padding:12px;border:1px solid #263d54;border-radius:12px;background:#0a1725}.stat small{display:block;color:var(--muted);font-size:11px}.stat b{font-size:21px}.foot{margin-top:15px;color:#7f96ad;font-size:11px}.toggle{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}.toggle input{accent-color:var(--blue)}
-@media(max-width:900px){.wrap{padding:12px}.layout{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr}.side>div:first-child{grid-column:1/-1}.scene{aspect-ratio:1.15}.top{align-items:flex-start;flex-direction:column}.pill{white-space:normal}}@media(max-width:520px){.side{display:flex}.stagebuttons{grid-template-columns:repeat(2,1fr)}.scene{aspect-ratio:1/1}.stagehead{padding:14px 14px 0}.controls{padding:14px}.legend{padding:0 14px 14px}}
-</style></head>
-<body><main class="wrap">
-<header class="top"><div><div class="eyebrow">CELL BIOLOGY / INTERACTIVE MODEL</div><h1>MEIOSIS LAB <span style="color:var(--blue)">↗</span></h1><p class="sub">염색체의 이동을 시간에 따라 관찰하는 감수 분열 실험실</p></div><div class="pill">2n = 4 · 교육용 동물세포 모형</div></header>
-<div class="layout"><section class="panel"><div class="stagehead"><div><div class="counter" id="phaseNo">PHASE 01 / 08</div><h2 id="phaseTitle">간기 — DNA 복제</h2><p id="phaseSummary">DNA가 복제되어 각 염색체가 두 자매 염색 분체로 이루어진다.</p></div><label class="toggle"><input id="labels" type="checkbox" checked> 설명 표시</label></div>
-<div class="scene"><svg id="scene" viewBox="0 0 900 600" role="img" aria-label="감수 분열 애니메이션"><defs><radialGradient id="cellFill"><stop offset="0" stop-color="#16334d"/><stop offset="1" stop-color="#0b1b2b"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g id="drawing"></g></svg></div>
-<div class="legend"><span><i class="dot" style="background:var(--blue)"></i>한쪽 상동 염색체</span><span><i class="dot" style="background:var(--red)"></i>다른 쪽 상동 염색체</span><span><i class="dot" style="background:var(--green)"></i>두 번째 염색체 쌍</span><span><i class="dot" style="background:var(--gold)"></i>상대 상동 염색체</span><span>가는 선: 방추 미세소관</span></div>
-<div class="controls"><div class="buttons"><button id="prev">← 이전</button><button id="play" class="primary">▶ 재생</button><button id="next">다음 →</button><button id="restart">↺ 처음부터</button><span style="flex:1"></span><label class="toggle">속도 <select id="speed" style="background:#14263a;color:var(--text);border:1px solid #30465e;border-radius:8px;padding:6px"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label></div><input id="progress" class="range" type="range" min="0" max="800" value="0" aria-label="애니메이션 진행 위치"><div class="timeinfo"><span id="stageTime">0.0초 · 간기</span><span id="percent">0%</span></div><div class="stagebuttons" id="stagebuttons"></div></div></section>
-<aside class="panel side"><div><h3>🔬 지금 관찰할 것</h3><p id="explain">간기에는 DNA가 복제된다. 복제 후에도 염색체 수는 4개(2n=4)이며, DNA량이 두 배가 된다.</p></div><div class="stats"><div class="stat"><small>염색체 세트</small><b id="ploidy">2n</b></div><div class="stat"><small>DNA량 (상대값)</small><b id="dna">4C</b></div><div class="stat"><small>세포 수</small><b id="cells">1</b></div><div class="stat"><small>염색 분체 상태</small><b id="chromatids" style="font-size:14px">복제 전 → 후</b></div></div><div class="fact"><strong>⚠️ 헷갈리기 쉬운 핵심</strong><p id="keypoint">DNA 복제는 감수 분열 시작 전 간기의 S기에 일어난다. 감수 1분열과 2분열 사이에는 DNA 복제가 없다.</p></div><div class="fact"><strong>모형의 범위</strong><p>2쌍(2n=4)만 그린 단순화 모형이야. 실제 사람은 23쌍(2n=46)이며, 난자 형성과 정자 형성의 세포질 분배는 서로 달라. 여기서는 분열 원리를 보기 위해 세포질이 균등하게 나뉘는 동물세포 모형으로 표현해.</p></div><div class="foot">※ 생물학적 사건은 단계 사이를 보간해 부드럽게 표현함. 실제 세포의 모양·속도·염색체 수를 그대로 축척한 현미경 영상은 아님.</div></aside></div>
-<div class="foot">학습 참고: OpenStax Biology 2e, “11.1 The Process of Meiosis”; Khan Academy, “Phases of meiosis”.</div></main>
+:root{color-scheme:dark;--bg:#07111f;--panel:#0d1b2b;--line:#294058;--text:#edf5ff;--muted:#9bb0c6;--blue:#5ba7ff;--red:#ff6b83;--green:#4bd6a0;--gold:#ffc857;--purple:#bd9cff}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#193754,var(--bg) 60%);color:var(--text);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1450px;margin:auto;padding:20px}button,select,input{font:inherit}button{color:var(--text);background:#14283d;border:1px solid #38516a;border-radius:11px;padding:10px 13px;cursor:pointer}button:hover{background:#1d3a56}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--blue);outline-offset:2px}.primary{background:#1767b9;border-color:#3d91ec}.header{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:15px}.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--blue);font-weight:800}.header h1{font-size:clamp(25px,4vw,40px);margin:4px 0;line-height:1.15}.muted{color:var(--muted)}.pill{border:1px solid #38516a;border-radius:99px;padding:7px 12px;font-size:12px;color:#c9e2ff;white-space:nowrap}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:15px}.panel{background:linear-gradient(145deg,#0e1e30,#091625);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 15px 45px #0002}.stagehead{padding:17px 19px 8px;display:flex;justify-content:space-between;gap:10px}.stagehead h2{margin:0;font-size:21px}.stagehead p{margin:4px 0 0;color:var(--muted);font-size:13px}.counter{font-size:11px;letter-spacing:.1em;color:var(--blue);font-weight:800}.scene{aspect-ratio:1.48;background:radial-gradient(ellipse at center,#142b42,#091625 72%)}svg{display:block;width:100%;height:100%}.legend{display:flex;flex-wrap:wrap;gap:12px;padding:0 19px 15px;color:var(--muted);font-size:12px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.controls{padding:15px 19px;border-top:1px solid var(--line)}.buttons{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.buttons .spacer{flex:1}.range{width:100%;accent-color:var(--blue);margin:15px 0 3px}.timeinfo{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}.stages{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:13px}.stages button{font-size:12px;padding:9px 4px}.stages button.active{background:#173d60;border-color:var(--blue);color:#e3f2ff}.side{padding:17px;display:flex;flex-direction:column;gap:12px}.side h3{font-size:16px;margin:0 0 5px}.side p{margin:0;color:#c1d0df;font-size:13px}.fact{border:1px solid #2a4055;background:#0b1928;border-radius:13px;padding:12px}.fact strong{display:block;margin-bottom:5px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:7px}.stat{border:1px solid #2a4055;background:#0a1725;border-radius:11px;padding:11px}.stat small{display:block;color:var(--muted);font-size:11px}.stat b{font-size:20px}.foot{color:#8197ad;font-size:11px;margin-top:12px}.toggle{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;white-space:nowrap}.toggle input{accent-color:var(--blue)}@media(max-width:920px){.wrap{padding:11px}.layout{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr}.side>div:first-child{grid-column:1/-1}.header{align-items:flex-start;flex-direction:column}.scene{aspect-ratio:1.2}}@media(max-width:540px){.side{display:flex}.scene{aspect-ratio:1/1}.stages{grid-template-columns:repeat(3,minmax(0,1fr))}.stagehead,.controls{padding-left:13px;padding-right:13px}.legend{padding-left:13px;padding-right:13px}}
+</style></head><body><main class="wrap">
+<header class="header"><div><div class="eyebrow">CELL BIOLOGY / CONTINUOUS ANIMATION</div><h1>MEIOSIS LAB <span style="color:var(--blue)">2.0</span></h1><div class="muted">DNA 복제부터 네 개의 반수체 세포까지 — 움직임을 끊지 않고 관찰하기</div></div><div class="pill">교육용 모형 · 2n = 4 · 2쌍의 상동 염색체</div></header>
+<div class="layout"><section class="panel"><div class="stagehead"><div><div id="phaseNo" class="counter">PHASE 01 / 09</div><h2 id="phaseTitle">간기 — DNA 복제</h2><p id="phaseSummary">염색질이 풀어진 상태에서 DNA가 복제된다.</p></div><label class="toggle"><input id="labels" type="checkbox" checked> 그림 설명</label></div>
+<div class="scene"><svg id="scene" viewBox="0 0 960 650" role="img" aria-label="감수 분열의 연속 애니메이션"><defs><radialGradient id="cellFill"><stop offset="0" stop-color="#17334c"/><stop offset="1" stop-color="#0b1a29"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g id="drawing"></g></svg></div>
+<div class="legend"><span><i class="dot" style="background:var(--blue)"></i>상동 염색체 A</span><span><i class="dot" style="background:var(--red)"></i>상동 염색체 A′</span><span><i class="dot" style="background:var(--green)"></i>상동 염색체 B</span><span><i class="dot" style="background:var(--gold)"></i>상동 염색체 B′</span><span>가는 선: 방추 미세소관(개념도)</span></div>
+<div class="controls"><div class="buttons"><button id="prev">← 이전</button><button id="play" class="primary">▶ 재생</button><button id="next">다음 →</button><button id="restart">↺ 처음부터</button><span class="spacer"></span><label class="toggle">속도 <select id="speed" style="background:#14283d;color:var(--text);border:1px solid #38516a;border-radius:8px;padding:6px"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label></div><input id="progress" class="range" type="range" min="0" max="9000" value="0" aria-label="애니메이션 진행 위치"><div class="timeinfo"><span id="stageTime">0.0초 · 간기</span><span id="percent">0%</span></div><div class="stages" id="stages"></div></div></section>
+<aside class="panel side"><div><h3>🔬 지금 관찰할 것</h3><p id="explain">간기의 S기에 DNA가 복제된다.</p></div><div class="stats"><div class="stat"><small>염색체 세트</small><b id="ploidy">2n</b></div><div class="stat"><small>DNA량(상대값)</small><b id="dna">2C → 4C</b></div><div class="stat"><small>세포 수</small><b id="cells">1</b></div><div class="stat"><small>염색체 상태</small><b id="chromatids" style="font-size:14px">복제 진행</b></div></div><div class="fact"><strong>⚠️ 핵심 구분</strong><p id="keypoint">DNA 복제 후에도 염색체 수는 4개다. DNA량만 두 배가 된다.</p></div><div class="fact"><strong>모형을 읽는 법</strong><p>염색체는 2쌍(2n=4)으로 단순화했어. 교차는 비자매 염색 분체 사이의 상호 DNA 구간 교환으로 표현해. 실제 세포의 분자 구조와 속도를 그대로 재현한 현미경 영상은 아니야.</p></div><div class="foot">생물학 기준: 감수 I은 상동 염색체 분리, 감수 II는 자매 염색 분체 분리. 두 분열 사이 DNA 복제는 없음.</div></aside></div><div class="foot">참고: OpenStax Biology 2e, The Process of Meiosis. 단계 경계는 학습용으로 구분했지만, 내부 움직임은 연속 보간으로 표현함.</div></main>
 <script>
-(()=>{
-'use strict';
-const NS='http://www.w3.org/2000/svg', root=document.getElementById('drawing');
-const colors={blue:'#5ba7ff',red:'#ff6b83',green:'#4bd6a0',gold:'#ffc857',white:'#eaf2fb',muted:'#8aa2ba',spindle:'#6f91b5',purple:'#bd9cff'};
-const phases=[
-{title:'간기 — DNA 복제',short:'간기',summary:'DNA가 복제되어 각 염색체가 두 자매 염색 분체로 이루어진다.',explain:'간기의 S기에 DNA가 복제된다. 복제된 염색체는 자매 염색 분체 2개로 이루어지지만, 동원체 기준 염색체 수는 여전히 4개(2n=4)다.',key:'DNA 복제는 감수 분열 시작 전 한 번만 일어난다. DNA량은 2C에서 4C로 증가한다.',ploidy:'2n',dna:'4C',cells:'1',chrom:'복제됨'},
-{title:'감수 1분열 전기 I',short:'전기 I',summary:'상동 염색체가 짝을 이루고, 비자매 염색 분체 사이에서 교차가 일어난다.',explain:'상동 염색체가 접합(synapsis)하여 2가 염색체(4분체)를 이룬다. 비자매 염색 분체 사이에서 DNA 구간이 서로 교환될 수 있고, 교차점은 키아스마로 관찰된다. 핵막이 분해되고 방추체가 형성된다.',key:'교차는 상동 염색체의 비자매 염색 분체 사이에서 일어난다. 자매 염색 분체끼리의 교환으로 그리면 안 된다.',ploidy:'2n',dna:'4C',cells:'1',chrom:'2개씩 연결'},
-{title:'감수 1분열 중기 I',short:'중기 I',summary:'상동 염색체 쌍이 세포 적도면에 배열되고 양쪽 극의 방추사가 연결된다.',explain:'각 상동 염색체 쌍이 적도면에 나란히 배열된다. 한 상동 염색체의 자매 동원체는 기능적으로 같은 극을 향하고, 상동 염색체 쌍은 서로 반대 극을 향한다.',key:'중기 I에는 자매 염색 분체가 서로 분리되지 않는다. 배열 방향은 쌍마다 무작위라 독립 분배의 원인이 된다.',ploidy:'2n',dna:'4C',cells:'1',chrom:'상동쌍 배열'},
-{title:'감수 1분열 후기 I',short:'후기 I',summary:'상동 염색체가 서로 반대 극으로 이동한다. 자매 염색 분체는 붙어 있다.',explain:'상동 염색체가 분리되어 양극으로 이동한다. 염색체 팔의 결합은 풀리지만 자매 염색 분체는 동원체 부근에서 함께 유지된다.',key:'감수 1분열은 염색체 세트 수를 2n에서 n으로 줄인다. 분리되는 것은 상동 염색체이지 자매 염색 분체가 아니다.',ploidy:'2n → n',dna:'4C',cells:'1 → 2',chrom:'자매는 함께'},
-{title:'감수 1분열 말기 I',short:'말기 I',summary:'두 반수체 세포가 형성된다. 각 염색체는 여전히 두 자매 염색 분체를 가진다.',explain:'염색체가 양극에 도달하고 핵막이 다시 형성될 수 있다. 세포질 분열로 두 세포가 만들어지며, 각 세포는 상동 염색체 쌍 중 하나씩만 가진다.',key:'각 딸세포는 n=2지만 염색체 하나하나가 아직 복제된 상태다. DNA량은 각 세포당 2C다.',ploidy:'n',dna:'2C / 세포',cells:'2',chrom:'자매는 함께'},
-{title:'감수 2분열 전기 II',short:'전기 II',summary:'새 방추체가 형성되고 핵막이 분해된다. 사이에 DNA 복제는 없다.',explain:'두 반수체 세포에서 염색체가 다시 응축되고 방추체가 형성된다. 종에 따라 핵막이 다시 생기지 않고 바로 이어질 수도 있다.',key:'감수 1분열과 2분열 사이에는 S기가 없다. DNA량은 각 세포당 2C로 유지된다.',ploidy:'n',dna:'2C / 세포',cells:'2',chrom:'자매는 함께'},
-{title:'감수 2분열 중기 II',short:'중기 II',summary:'각 세포에서 염색체가 하나씩 적도면에 배열되고 자매 동원체는 반대 극을 향한다.',explain:'각 반수체 세포에서 복제된 염색체가 하나씩 적도면에 배열된다. 자매 염색 분체의 동원체는 서로 반대쪽 극에서 온 방추 미세소관과 연결된다.',key:'중기 I과 달리 상동 염색체 쌍이 아니라 개별 염색체가 배열된다.',ploidy:'n',dna:'2C / 세포',cells:'2',chrom:'자매 양쪽 연결'},
-{title:'감수 2분열 후기 II',short:'후기 II',summary:'자매 염색 분체가 분리되어 각각 독립된 염색체가 된다.',explain:'동원체 부근의 자매 염색 분체 결합이 풀리고 각각 반대 극으로 이동한다. 교차가 있었던 염색 분체는 서로 다른 유전자 조합을 가질 수 있다.',key:'분리된 자매 염색 분체는 이제 각각 독립된 염색체로 센다.',ploidy:'n',dna:'2C → 1C',cells:'2',chrom:'자매 분리'},
-{title:'감수 2분열 말기 II',short:'말기 II',summary:'핵막이 재형성되고 세포질 분열이 끝나 네 개의 반수체 세포가 만들어진다.',explain:'염색체가 각 극에 도달하고 핵막이 형성된다. 세포질 분열이 완료되면 네 개의 반수체 세포가 생기며, 각각 염색체 세트 하나(n=2)를 가진다.',key:'결과는 네 개의 반수체 세포. 교차와 상동 염색체의 독립 분배 때문에 유전적 조합이 서로 다를 수 있다.',ploidy:'n',dna:'1C / 세포',cells:'4',chrom:'단일 염색체'}
-];
-// Global time uses 8 equal phase intervals. Interpolation between adjacent phase states makes movement continuous.
-const D=phases.length-1; let t=0, playing=false,last=0,raf=0;
-const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), mix=(a,b,p)=>a+(b-a)*p, smooth=p=>{p=clamp(p);return p*p*(3-2*p)};
-function el(tag,attrs={},parent=root){const n=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,v);parent.appendChild(n);return n}
-function line(x1,y1,x2,y2,color,width=2,opacity=.7,dash=''){return el('line',{x1,y1,x2,y2,stroke:color,'stroke-width':width,'stroke-linecap':'round',opacity,...(dash?{'stroke-dasharray':dash}:{})})}
-function text(x,y,s,size=14,color=colors.muted,anchor='middle'){const n=el('text',{x,y,fill:color,'font-size':size,'font-weight':600,'text-anchor':anchor});n.textContent=s;return n}
-function cell(cx,cy,rx,ry,alpha=1){el('ellipse',{cx,cy,rx,ry,fill:'url(#cellFill)',stroke:'#456784','stroke-width':2,opacity:alpha});}
-function nucleus(cx,cy,r,alpha=1){el('circle',{cx,cy,r,fill:'#182b42',stroke:'#617e9c','stroke-width':1.5,opacity:alpha,'stroke-dasharray':'5 4'});}
-function pole(x,y){el('circle',{cx:x,cy:y,r:7,fill:'#d3e5f7',stroke:'#7e9dbb','stroke-width':2});for(let a=0;a<Math.PI*2;a+=Math.PI/4)line(x+Math.cos(a)*10,y+Math.sin(a)*10,x+Math.cos(a)*17,y+Math.sin(a)*17,'#7898b9',1.5,.8)}
-function spindle(x1,y1,x2,y2,op=.65){line(x1,y1,x2,y2,colors.spindle,1.15,op)}
+(()=>{'use strict';
+const svgNS='http://www.w3.org/2000/svg', drawing=document.getElementById('drawing');
+const C={blue:'#5ba7ff',red:'#ff6b83',green:'#4bd6a0',gold:'#ffc857',white:'#edf5ff',muted:'#91a8bf',fiber:'#7899bb',purple:'#bd9cff'};
+const P=[
+{title:'간기 — DNA 복제',short:'간기 / 복제',summary:'풀어진 염색질이 복제되어 두 벌의 DNA가 된다.',explain:'간기의 S기에 DNA가 복제돼. 복제 전에는 염색체 하나당 DNA 분자 하나, 복제 후에는 자매 염색 분체 두 개가 동원체에서 연결돼. 복제 과정 자체를 왼쪽→오른쪽으로 펼쳐 보여줘.',key:'DNA 복제는 감수 분열 전에 한 번. 염색체 수는 4개(2n=4)로 유지되지만 DNA량은 2C에서 4C로 증가한다.',ploidy:'2n',dna:'2C → 4C',cells:'1',chrom:'복제 진행'},
+{title:'감수 1분열 전기 I',short:'전기 I',summary:'염색체가 응축되고 상동 염색체가 짝을 이루며 교차한다.',explain:'염색질이 굵고 짧은 염색체로 응축돼. 상동 염색체는 접합해 2가 염색체를 이루고, 비자매 염색 분체 사이에서 교차가 일어나 DNA 구간이 서로 바뀔 수 있어. 방추체가 만들어지고 핵막은 사라져.',key:'교차는 상동 염색체의 비자매 염색 분체 사이에서 일어난다. 모든 위치에서 항상 일어나는 것은 아니며, 그림은 교차가 한 번 일어난 예시다.',ploidy:'2n',dna:'4C',cells:'1',chrom:'복제된 상태'},
+{title:'감수 1분열 중기 I',short:'중기 I',summary:'상동 염색체 쌍이 적도면에 정렬되고 방추사가 부착된다.',explain:'상동 염색체 쌍이 적도면에 나란히 배열돼. 각 상동 염색체는 반대쪽 극을 향하지만 자매 염색 분체는 감수 I에서 함께 움직이도록 연결 상태를 유지해.',key:'중기 I은 상동 염색체 쌍이 배열되는 단계다. 자매 염색 분체 하나씩이 따로 정렬되는 감수 II와 다르다.',ploidy:'2n',dna:'4C',cells:'1',chrom:'상동쌍 배열'},
+{title:'감수 1분열 후기 I',short:'후기 I',summary:'상동 염색체가 반대 극으로 이동한다. 자매 염색 분체는 함께 남는다.',explain:'상동 염색체 사이의 결합이 풀리고 각 염색체가 반대 극으로 이동해. 염색체는 X 모양을 유지해 자매 염색 분체가 아직 분리되지 않았다는 점을 보여줘.',key:'분리 대상은 상동 염색체다. 자매 염색 분체를 갈라놓으면 감수 I의 핵심을 잘못 표현하는 것이다.',ploidy:'2n → n',dna:'4C',cells:'1 → 2',chrom:'자매는 함께'},
+{title:'감수 1분열 말기 I',short:'말기 I',summary:'세포질이 나뉘어 두 세포가 되고, 각 세포에는 복제된 염색체가 남는다.',explain:'염색체가 양극에 도착한 뒤 세포가 길게 잘록해지며 둘로 나뉘어. 핵막이 재형성될 수 있고, 각 딸세포는 상동 염색체 쌍 중 하나씩만 가져. 염색체는 여전히 X 모양이야.',key:'각 세포는 반수체(n=2)지만 염색체는 아직 두 자매 염색 분체로 이루어진다. 각 세포 DNA량은 2C다.',ploidy:'n',dna:'2C / 세포',cells:'2',chrom:'자매는 함께'},
+{title:'감수 2분열 전기 II',short:'전기 II',summary:'두 세포에서 염색체가 다시 응축되고 새로운 방추체가 형성된다.',explain:'두 반수체 세포 각각에서 방추체가 형성되고 염색체가 움직일 준비를 해. 종에 따라 핵막이 잠깐 재형성되지 않고 이어질 수도 있지만, 교육용 모형에서는 두 세포에서 다음 분열이 시작되는 모습을 보여줘.',key:'감수 I과 감수 II 사이에는 DNA 복제가 없다. 각 세포의 염색체는 이미 복제된 상태를 유지한다.',ploidy:'n',dna:'2C / 세포',cells:'2',chrom:'자매는 함께'},
+{title:'감수 2분열 중기 II',short:'중기 II',summary:'각 세포에서 염색체가 하나씩 적도면에 정렬된다.',explain:'각 세포에 남은 염색체가 개별적으로 적도면에 놓여. 자매 염색 분체의 동원체는 서로 반대 극의 방추 미세소관과 연결돼.',key:'중기 II에는 상동 염색체 쌍이 아니라 염색체가 각각 정렬된다.',ploidy:'n',dna:'2C / 세포',cells:'2',chrom:'양쪽 극 연결'},
+{title:'감수 2분열 후기 II',short:'후기 II',summary:'자매 염색 분체의 결합이 풀리고 각각 반대 극으로 이동한다.',explain:'동원체 주변의 자매 염색 분체 결합이 풀려. 분리된 각 염색 분체는 이제 독립된 염색체로 취급돼. 이동은 한순간에 끊는 것이 아니라 V자 형태로 늘어나며 극으로 향하는 연속 동작으로 표현해.',key:'감수 II에서 분리되는 것은 자매 염색 분체다. 분리 직후 각각은 독립된 염색체가 된다.',ploidy:'n',dna:'2C → 1C',cells:'2',chrom:'자매 분리'},
+{title:'감수 2분열 말기 II',short:'말기 II',summary:'두 세포가 각각 나뉘어 네 개의 반수체 세포가 된다.',explain:'염색체가 각 극에 도착하고 핵막이 형성되며 세포질 분열이 완료돼. 네 세포 각각은 염색체 세트 하나(n=2)를 가지며, 교차와 독립 분배 때문에 유전적 조합이 서로 다를 수 있어.',key:'최종 결과는 반수체 세포 4개. 각 세포의 염색체는 더 이상 X 모양의 복제 염색체가 아니라 한 염색 분체로 이루어진다.',ploidy:'n',dna:'1C / 세포',cells:'4',chrom:'단일 염색체'}];
+const N=P.length, TOTAL=N, $=id=>document.getElementById(id);let t=0,playing=false,last=0,raf=0;
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)),mix=(a,b,q)=>a+(b-a)*q,smooth=q=>{q=clamp(q);return q*q*(3-2*q)},ease=q=>{q=clamp(q);return q<.5?4*q*q*q:1-Math.pow(-2*q+2,3)/2};
+function el(tag,attrs={},parent=drawing){const n=document.createElementNS(svgNS,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,v);parent.appendChild(n);return n}
+function line(x1,y1,x2,y2,color,op=.6,w=1.5,dash=''){const a={x1,y1,x2,y2,stroke:color,'stroke-width':w,opacity:op,'stroke-linecap':'round'};if(dash)a['stroke-dasharray']=dash;return el('line',a)}
+function txt(x,y,s,size=14,color=C.white,anchor='middle',weight=500){return el('text',{x,y,'font-size':size,fill:color,'text-anchor':anchor,'font-weight':weight}) .appendChild(document.createTextNode(s)).parentNode}
+function cell(x,y,rx,ry,op=1){el('ellipse',{cx:x,cy:y,rx,ry,fill:'url(#cellFill)',stroke:'#7ca0bf','stroke-width':2,opacity:op});}
+function nucleus(x,y,r,op=1){el('circle',{cx:x,cy:y,r,fill:'#111f31',stroke:'#7c94b3','stroke-width':1.6,opacity:op});}
+function pole(x,y,op=1){el('circle',{cx:x,cy:y,r:5,fill:'#d7e8ff',opacity:op});for(let a=0;a<Math.PI*2;a+=Math.PI/4)line(x+Math.cos(a)*7,y+Math.sin(a)*7,x+Math.cos(a)*15,y+Math.sin(a)*15,'#7899bb',op,1.5)}
 function chromatidPath(x1,y1,x2,y2,bend=0){return `M ${x1} ${y1} Q ${(x1+x2)/2+bend} ${(y1+y2)/2} ${x2} ${y2}`}
-function chromatid(x1,y1,x2,y2,color,width=5,opacity=1,bend=0){el('path',{d:chromatidPath(x1,y1,x2,y2,bend),fill:'none',stroke:color,'stroke-width':width,'stroke-linecap':'round','stroke-linejoin':'round',opacity});}
-// X-shaped replicated chromosome. Crossover is a reciprocal exchange of distal arms between NON-sister chromatids.
-function chromosome(cx,cy,size,color,opts={}){const {angle=0,hybrid=null,alpha=1,thin=false}=opts;const g=el('g',{transform:`translate(${cx} ${cy}) rotate(${angle})`,opacity:alpha});const s=size/2,w=thin?3.5:5.5;
-// Four arms meet at the centromere; sister chromatids are parallel curves.
-const paths=[[-s,-s,s,s],[-s,s,s,-s]];
-paths.forEach((p,i)=>{const bend=i===0?-3:3;el('path',{d:`M ${p[0]} ${p[1]} Q ${bend} 0 ${p[2]} ${p[3]}`,fill:'none',stroke:color,'stroke-width':w,'stroke-linecap':'round'},g)});
-// exchanged distal tip overlay visually marks recombinant chromatid; limited to one chromatid arm.
-if(hybrid){el('path',{d:`M 0 0 Q 1 -3 ${s} ${s}`,fill:'none',stroke:hybrid,'stroke-width':w,'stroke-linecap':'round'},g);}
-el('ellipse',{cx:0,cy:0,rx:4.3,ry:5,fill:'#e7f0fa',stroke:'#223d58','stroke-width':1},g);return g}
-function singleChromatid(cx,cy,size,color,hybrid=null,angle=0){const g=el('g',{transform:`translate(${cx} ${cy}) rotate(${angle})`});const s=size/2;chromatid(-s,-s,s,s,color,4.5,1,-2);chromatid(-s,s,s,-s,color,4.5,1,2);if(hybrid)chromatid(0,0,s,s,hybrid,4.5,1,-2);el('circle',{cx:0,cy:0,r:3.5,fill:'#eef5ff'} ,g);return g}
-function clear(){root.replaceChildren()}
-function drawAt(time){clear();const phase=clamp(time/D,0,1)*D, i=Math.min(D-1,Math.floor(phase)), p=phase>=D?1:smooth(phase-i);const stage=Math.min(D,Math.floor(phase+(phase>=D?0:0)));const W=900,H=600;
-// draw cell layout morphs from one cell to two, then four. Cells smoothly move apart.
-const split1=smooth(clamp((phase-3.45)/1.15)), split2=smooth(clamp((phase-7.0)/1.1));
-const cellSpecs=[];
-if(phase<4.35){cellSpecs.push({x:450,y:300,rx:250,ry:220,alpha:1,kind:0})}
-else if(phase<7.15){const q=split1;cellSpecs.push({x:mix(450,250,q),y:300,rx:mix(250,165,q),ry:mix(220,170,q),alpha:1,kind:1},{x:mix(450,650,q),y:300,rx:mix(250,165,q),ry:mix(220,170,q),alpha:q,kind:2})}
-else{const q=split2;[[250,300],[650,300]].forEach((c,j)=>{cellSpecs.push({x:mix(c[0],mix(c[0],c[0]-70,q),q),y:mix(c[1],j===0?170:430,q),rx:mix(165,90,q),ry:mix(170,85,q),alpha:1,kind:j+1})});}
-cellSpecs.forEach(c=>cell(c.x,c.y,c.rx,c.ry,c.alpha));
-// Nuclear envelopes are visible in interphase and telophase; fade out during prophase.
-let nucAlpha=phase<.8?1:phase<1.7?1-smooth((phase-.8)/.9):phase>3.8&&phase<4.8?smooth((phase-3.8)/1):phase>7.65?smooth((phase-7.65)/.8):0;
-cellSpecs.forEach(c=>{if(nucAlpha>.02)nucleus(c.x,c.y,Math.min(c.rx,c.ry)*.45,nucAlpha*c.alpha)});
-// Pole and spindle positions per cell. Fibres are drawn to kinetochore/centromere region.
-const cellsForChrom=cellSpecs.filter(c=>c.alpha>.05);
-cellsForChrom.forEach((c,ci)=>{const left=c.x-c.rx*.72,right=c.x+c.rx*.72,cy=c.y;const active=clamp((phase-(ci===0?1.25:4.55))/.7);const spindleAlpha=clamp(active)*clamp((phase>3.7&&phase<4.8)?1:phase>7.3?1:.85);
-if(spindleAlpha>.03){pole(left,cy);pole(right,cy)}
-// Choose which homologues each daughter receives after meiosis I: blue+green on left, red+gold on right.
-let chroms;
-if(phase<4.35)chroms=[{x:0,y:-35,color:colors.blue,size:75,id:0},{x:0,y:-35,color:colors.red,size:75,id:1},{x:0,y:45,color:colors.green,size:57,id:2},{x:0,y:45,color:colors.gold,size:57,id:3}];
-else chroms=ci===0?[{x:0,y:-30,color:colors.blue,size:68,id:0},{x:0,y:35,color:colors.green,size:53,id:2}]:[{x:0,y:-30,color:colors.red,size:68,id:1},{x:0,y:35,color:colors.gold,size:53,id:3}];
-chroms.forEach(ch=>{
-let x=c.x+ch.x,y=c.y+ch.y,sz=ch.size,angle=0,hybrid=null,alpha=1;
-// Prophase I synapsis and crossover: homologues pair; recombinant tip appears progressively.
-if(ch.id===0||ch.id===1){const pair=smooth(clamp((phase-.85)/.75));const side=ch.id===0?-1:1;x=c.x+mix(side*36,side*13,pair);y=c.y-35;angle=side*mix(-10,8,pair);if(phase>1.05&&phase<2.15){hybrid=ch.id===0?colors.red:colors.blue;}}
-if(ch.id===2||ch.id===3){const side=ch.id===2?-1:1;const pair=smooth(clamp((phase-.9)/.8));x=c.x+mix(side*28,side*12,pair);y=c.y+45;angle=side*mix(10,-7,pair);if(phase>1.15&&phase<2.1)hybrid=ch.id===2?colors.gold:colors.green;}
-// Metaphase I: paired homologues align at equator, attached to opposite poles.
-if(phase>=2&&phase<3){const q=smooth((phase-2)/1);x=mix(x,c.x+(ch.id%2===0?-17:17),q);y=mix(y,c.y+(ch.id<2?-35:35),q);angle=mix(angle,0,q);}
-// Anaphase I: homologues move apart; sisters remain joined (X stays intact).
-if(phase>=3&&phase<4.45){const q=smooth((phase-3)/1.2);const homologSide=(ch.id===0||ch.id===2)?-1:1;x=mix(c.x+(homologSide*17),c.x+homologSide*c.rx*.52,q);y=mix(c.y+ch.y,c.y+ch.y*.25,q);alpha=1;}
-// Cell I and II contain only one homologue of each pair after division I.
-if(phase>=4.2&&phase<6.0){x=c.x+(ch.id%2===0?-18:18);y=c.y+ch.y*.65;angle=0;}
-// Metaphase II: chromosomes align singly at equator, sisters oriented to opposite poles.
-if(phase>=6&&phase<7){const q=smooth(phase-6);x=mix(x,c.x,c.q||q);y=mix(y,c.y+ch.y*.6,c.y);angle=mix(angle,0,q);}
-// Anaphase II: X resolves into two single chromatids moving to opposite poles.
-if(phase>=7&&phase<8){const q=smooth(phase-7);const side=(ch.id%2===0?-1:1);const dx=side*c.rx*.45;const yy=ch.y*.5; // draw paired chromatids as separate V-like units
-x=c.x+dx*q;y=c.y+yy*q;sz=ch.size*.68;}
-// final telophase: four cells each receive one chromatid of each chromosome type
-if(phase>=7.8){x=c.x+(ch.id%2===0?-20:20);y=c.y+ch.y*.35;sz*=.7;}
-// Spindle fibres are shown during division. Meiosis I fibres connect homologues to opposite poles.
-if(phase>1.4&&phase<4.35){const attachX=x,attachY=y;const side=(ch.id===0||ch.id===2)?-1:1;spindle(side<0?left:right,cy,attachX,attachY,Math.min(.7,spindleAlpha));}
-if(phase>4.7&&phase<7.95){const attachX=x,attachY=y;spindle(left,cy,attachX,attachY,spindleAlpha*.7);spindle(right,cy,attachX,attachY,spindleAlpha*.7);}
-if(phase>=7&&phase<7.85){ // split sisters into separate chromatid-like arms
-const q=smooth(phase-7),dx=c.rx*.32*q;singleChromatid(x-dx,y,sz*.75,ch.color,hybrid,-10);singleChromatid(x+dx,y,sz*.75,ch.color,hybrid,10);
-}else chromosome(x,y,sz,ch.color,{angle,hybrid,alpha});
-});
-});
-// Cell labels and equator markers
-if(phase>=2&&phase<3.25)line(450,120,450,480,'#45627e',1,.35,'5 7');
-if(phase>=6&&phase<7.2)cellsForChrom.forEach(c=>line(c.x,c.y-c.ry*.65,c.x,c.y+c.ry*.65,'#45627e',1,.35,'5 7'));
-// Crossing-over inset during prophase I, showing exchange between non-sister chromatids.
-if(phase>1.05&&phase<2.25){const a=clamp((phase-1.05)/.45);el('rect',{x:610,y:40,width:240,height:118,rx:13,fill:'#0a1726',stroke:'#304a65','stroke-width':1,opacity:.96});text(730,61,'교차 확대',13,colors.white);chromatid(640,84,690,124,colors.blue,4,a);chromatid(640,124,690,84,colors.red,4,a);chromatid(770,84,820,124,colors.blue,4,a);chromatid(770,124,820,84,colors.red,4,a);chromatid(795,103,820,124,colors.red,4,a);text(730,145,'비자매 염색 분체 사이 DNA 교환',10,colors.muted);}
-// Stage label in the SVG for visual focus
-if(document.getElementById('labels').checked){text(450,35,phases[Math.min(D,Math.floor(phase))].title,18,colors.white);}
-updateUI(phase);
+function strokePath(d,color,w=4.5,op=1,parent=drawing){return el('path',{d,fill:'none',stroke:color,'stroke-width':w,'stroke-linecap':'round','stroke-linejoin':'round',opacity:op},parent)}
+function chromosome(x,y,size,color,opts={}){const {angle=0,alpha=1,hybrid=null,shape='X'}=opts;const g=el('g',{transform:`translate(${x} ${y}) rotate(${angle})`,opacity:alpha});const s=size/2;if(shape==='X'){strokePath(`M ${-s} ${-s} Q -2 -2 ${s} ${s}`,color,5.5,1,g);strokePath(`M ${-s} ${s} Q 2 -2 ${s} ${-s}`,color,5.5,1,g);if(hybrid){strokePath(`M 0 0 Q ${s*.45} ${s*.42} ${s} ${s}`,hybrid,5.5,1,g);}}else{ // V-shaped migrating sister chromatid: centromere leads toward pole; arms trail
+strokePath(`M ${-s*.72} ${-s} Q ${-s*.18} ${-s*.22} 0 0 Q ${s*.2} ${-s*.22} ${s*.72} ${-s}`,color,5,1,g);if(hybrid)strokePath(`M ${s*.22} ${-s*.28} Q ${s*.5} ${-s*.55} ${s*.72} ${-s}`,hybrid,5,1,g);}
+el('ellipse',{cx:0,cy:0,rx:4.5,ry:5,fill:'#f3f7ff',stroke:'#253e59','stroke-width':1},g);return g}
+function chromatin(cx,cy,r,color,seed,opacity=1,replicated=1){let d='';for(let j=0;j<5;j++){let x=cx+Math.sin(seed*2+j*1.7)*r*.55,y=cy+Math.cos(seed+j*2.1)*r*.48;d+=` M ${x} ${y} `;for(let k=0;k<6;k++){x+=Math.sin(seed+j*3+k*1.3)*r*.22;y+=Math.cos(seed+j+k*1.8)*r*.19;d+=`Q ${x+Math.sin(k+seed)*5} ${y+Math.cos(k)*5} ${x} ${y}`;}}strokePath(d,color,1.8,opacity);if(replicated>0){const d2=d.replace(/M /g,'M ');strokePath(d2,C.purple,1.4,opacity*replicated*.7)}}
+function spindle(x1,y1,x2,y2,op=.7,w=1.25){line(x1,y1,x2,y2,C.fiber,op,w)}
+function chromatidCountLabel(x,y,label){txt(x,y,label,11,C.muted)}
+function draw(time){drawing.replaceChildren();const stage=Math.min(N-1,Math.floor(time)), q=smooth(time-stage), u=time;const W=960,H=650;
+// Smooth cell division geometry: one cell -> two -> four; the split begins before the phase boundary.
+const split1=smooth(clamp((u-3.55)/1.35)), split2=smooth(clamp((u-7.55)/1.2));let cells=[];
+if(u<4.6){cells=[{x:480,y:330,rx:270,ry:245,a:1,id:0}];}
+else if(u<8.15){cells=[{x:mix(480,260,split1),y:330,rx:mix(270,180,split1),ry:mix(245,175,split1),a:1,id:0},{x:mix(480,700,split1),y:330,rx:mix(270,180,split1),ry:mix(245,175,split1),a:split1,id:1}];}
+else {cells=[[260,330],[700,330]].map((p,i)=>({x:mix(p[0],i===0?145:815,split2),y:mix(330,i<1?190:470,split2),rx:mix(180,112,split2),ry:mix(175,108,split2),a:1,id:i}));}
+cells.forEach(c=>cell(c.x,c.y,c.rx,c.ry,c.a));
+// Interphase is intentionally drawn as loose chromatin, then copied DNA strands become visible before condensation.
+if(u<1.0){let copy=smooth(u/.9);nucleus(480,330,133,1);chromatin(480,330,110,C.blue,1,.85,0);chromatin(480,330,100,C.red,2,.82,0);chromatin(480,330,88,C.green,3,.82,0);chromatin(480,330,76,C.gold,4,.82,0);if(copy>.02){for(let j=0;j<4;j++){const yy=260+j*37;const x0=mix(430,345,copy),x1=mix(480,615,copy);strokePath(`M ${x0} ${yy} C ${x0+30} ${yy-28} ${x0+45} ${yy+25} ${x0+70} ${yy} S ${x1-30} ${yy-18} ${x1} ${yy}`,[C.blue,C.red,C.green,C.gold][j],2.8,copy);strokePath(`M ${x0} ${yy+7} C ${x0+25} ${yy+31} ${x0+53} ${yy-18} ${x0+80} ${yy+7} S ${x1-30} ${yy+24} ${x1} ${yy+7}`,C.purple,2,copy*.9);}txt(480,500,'DNA 복제: 이중 가닥이 복사되어 두 자매 염색 분체가 형성됨',15,C.white);}}
+else {
+// Nucleus fades as prophase begins; returns during telophase.
+let nuc=u<1.75?1-smooth((u-1)/.75):u>3.9&&u<4.85?smooth((u-3.9)/.95):u>8.35?smooth((u-8.35)/.5):0;
+cells.forEach(c=>{if(nuc>.02)nucleus(c.x,c.y,Math.min(c.rx,c.ry)*.48,nuc*c.a)});
+// Spindle poles and fibres appear gradually in each active cell.
+cells.forEach((c,ci)=>{const active=smooth(clamp((u-(ci===0?1.1:4.7))/.65));const left=c.x-c.rx*.72,right=c.x+c.rx*.72,cy=c.y;if(active>.02&&u<8.9){pole(left,cy,active*c.a);pole(right,cy,active*c.a)}});
+// chromosome pairs: homologues blue/red (long) and green/gold (short). During I, homologues separate intact Xs.
+const chroms=[{id:0,color:C.blue,partner:C.red,sz:74,dy:-60,hom:-1},{id:1,color:C.red,partner:C.blue,sz:74,dy:-60,hom:1},{id:2,color:C.green,partner:C.gold,sz:58,dy:55,hom:-1},{id:3,color:C.gold,partner:C.green,sz:58,dy:55,hom:1}];
+cells.forEach((c,ci)=>{const left=c.x-c.rx*.72,right=c.x+c.rx*.72,cy=c.y;let selected=chroms;
+if(u>=4.4&&u<8.25)selected=chroms.filter(ch=>ci===0?(ch.id===0||ch.id===2):(ch.id===1||ch.id===3));
+if(u>=8.25)selected=chroms.filter(ch=>ci===0?(ch.id===0||ch.id===2):(ch.id===1||ch.id===3));
+selected.forEach(ch=>{let x=c.x+ch.hom*25,y=c.y+ch.dy,sz=ch.sz,angle=ch.hom*5,alpha=c.a,hybrid=null,shape='X';
+// Condensation in prophase I.
+if(u<1.9){const cond=smooth((u-1)/.9);sz=ch.sz*(.28+.72*cond);x=c.x+ch.hom*mix(48,25,cond);y=c.y+ch.dy*.7;alpha*=cond;}
+// Synapsis: homologous X chromosomes approach and pair, crossover exchanges distal segments on non-sister chromatids.
+if(u>=1&&u<2.25){const pair=smooth((u-1)/.8);x=c.x+ch.hom*mix(45,13,pair);y=c.y+ch.dy;angle=ch.hom*mix(-8,4,pair);if(u>1.35&&u<2.35)hybrid=ch.partner;}
+// Metaphase I: bivalents are deliberately separated enough to see pairs and the equator.
+if(u>=2&&u<3){const z=smooth(u-2);x=mix(c.x+ch.hom*13,c.x+ch.hom*19,z);y=mix(c.y+ch.dy,c.y+ch.dy*.35,z);angle=mix(angle,0,z);}
+// Anaphase I: homologues migrate continuously to opposite poles; X remains intact.
+if(u>=3&&u<4.55){const z=ease((u-3)/1.35);const side=ch.hom;x=mix(c.x+side*19,c.x+side*c.rx*.51,z);y=mix(c.y+ch.dy*.35,c.y+ch.dy*.2,z);angle=mix(0,side*12,z);}
+// Post-I: each cell has one homologue from each pair; chromosomes remain replicated.
+if(u>=4.4&&u<6){const z=smooth(clamp((u-4.4)/.6));x=c.x+ch.hom*mix(15,20,z);y=c.y+ch.dy*.65;angle=ch.hom*3;}
+// Metaphase II: each chromosome aligns singly at its own cell equator.
+if(u>=6&&u<7){const z=smooth(u-6);x=mix(c.x+ch.hom*20,c.x+ch.hom*9,z);y=mix(c.y+ch.dy*.65,c.y+ch.dy*.28,z);angle=mix(angle,0,z);}
+// Anaphase II: draw two sister chromatids separately. The centromere leads, arms trail in V shapes.
+if(u>=7&&u<8.65){const z=ease((u-7)/1.3);const dx=c.rx*.43*z;const baseY=c.y+ch.dy*.28;const split=clamp((u-7)/.25);const c1x=mix(c.x+ch.hom*9,c.x-dx,split),c2x=mix(c.x+ch.hom*9,c.x+dx,split);const yy1=mix(baseY,c.y+ch.dy*.2,z),yy2=mix(baseY,c.y+ch.dy*.2,z);sz*=.72;
+// spindle fibres to the two separated kinetochores; smooth growth and fading.
+const f=smooth(clamp((u-6.65)/.35))*(1-smooth(clamp((u-8.1)/.5)));spindle(left,cy,c1x,yy1,f*.7);spindle(right,cy,c2x,yy2,f*.7);chromosome(c1x,yy1,sz,ch.color,{angle:-18,alpha:c.a,hybrid,shape:'V'});chromosome(c2x,yy2,sz,ch.color,{angle:18,alpha:c.a,hybrid,shape:'V'});return;}
+// Spindle attachment: visible lines end at centromere. Meiosis I attaches homologues to opposite poles.
+const spindleAlpha=smooth(clamp((u-1.55)/.5))*(1-smooth(clamp((u-4.25)/.4)));if(u>1.55&&u<4.55){spindle(ch.hom<0?left:right,cy,x,y,spindleAlpha*.72,1.25);}
+const spindle2=smooth(clamp((u-5.6)/.45))*(1-smooth(clamp((u-8.2)/.35)));if(u>5.6&&u<8.4){spindle(left,cy,x,y,spindle2*.45,1);spindle(right,cy,x,y,spindle2*.45,1);}
+chromosome(x,y,sz,ch.color,{angle,alpha,hybrid});
+});});
+// Equator markers for metaphase I/II.
+if(u>=2&&u<3.2)line(480,130,480,530,'#506e8c',.4,1.2,'5 7');if(u>=6&&u<7.2)cells.forEach(c=>line(c.x,c.y-c.ry*.7,c.x,c.y+c.ry*.7,'#506e8c',.4,1.2,'5 7'));
+// Crossover zoom: a reciprocal color swap on two non-sister chromatids, not a whole chromosome magically changing.
+if(u>1.3&&u<2.45){const a=smooth((u-1.3)/.3)*(1-smooth((u-2.15)/.3));el('rect',{x:660,y:35,width:260,height:125,rx:13,fill:'#091625',stroke:'#38516a',opacity:.97});txt(790,57,'교차 확대 · 비자매 염색 분체',13,C.white);strokePath('M 690 78 C 710 85 720 115 745 127',C.blue,4,a);strokePath('M 690 127 C 710 118 720 86 745 78',C.red,4,a);strokePath('M 820 78 C 840 85 850 115 875 127',C.blue,4,a);strokePath('M 820 127 C 840 118 850 86 875 78',C.red,4,a);strokePath('M 730 110 Q 740 105 745 127',C.red,4,a);strokePath('M 860 110 Q 870 105 875 127',C.blue,4,a);txt(790,148,'서로 대응하는 DNA 구간을 교환',10,C.muted);}
+// Telophase II: four daughter cells, each receives one chromatid of each chromosome type.
+if(u>=8.25){const q=smooth((u-8.25)/.65);const finalCells=[{x:145,y:190,rx:100,ry:90,ids:[0,2]},{x:360,y:190,rx:100,ry:90,ids:[1,3]},{x:600,y:460,rx:100,ry:90,ids:[0,2]},{x:815,y:460,rx:100,ry:90,ids:[1,3]}]; // daughters are visual outcomes, with recombinant color marks
+finalCells.forEach((fc,j)=>{el('ellipse',{cx:fc.x,cy:fc.y,rx:mix(75,fc.rx,q),ry:mix(68,fc.ry,q),fill:'url(#cellFill)',stroke:'#7ca0bf','stroke-width':1.8,opacity:q});nucleus(fc.x,fc.y,25,q);fc.ids.forEach((id,k)=>{const ch=chroms[id];const sx=fc.x+(k===0?-20:20),sy=fc.y+(k===0?-10:12);chromosome(sx,sy,22,ch.color,{shape:'I',alpha:q,hybrid:(j%2===0&&k===0)?C.purple:null});});txt(fc.x,fc.y+fc.ry+16,`반수체 세포 ${j+1}`,11,C.muted);});}
 }
-function updateUI(phase){const idx=Math.min(D,Math.floor(phase));const ph=phases[idx];document.getElementById('phaseNo').textContent=`PHASE ${String(idx+1).padStart(2,'0')} / 09`;document.getElementById('phaseTitle').textContent=ph.title;document.getElementById('phaseSummary').textContent=ph.summary;document.getElementById('explain').textContent=ph.explain;document.getElementById('keypoint').textContent=ph.key;document.getElementById('ploidy').textContent=ph.ploidy;document.getElementById('dna').textContent=ph.dna;document.getElementById('cells').textContent=ph.cells;document.getElementById('chromatids').textContent=ph.chrom;document.getElementById('progress').value=Math.round(phase/D*800);document.getElementById('percent').textContent=Math.round(phase/D*100)+'%';document.getElementById('stageTime').textContent=(phase*2.8).toFixed(1)+'초 · '+ph.short;document.querySelectorAll('.stagebuttons button').forEach((b,j)=>b.classList.toggle('active',j===idx));}
-const stageButtons=document.getElementById('stagebuttons');phases.forEach((ph,i)=>{const b=document.createElement('button');b.textContent=ph.short;b.addEventListener('click',()=>{t=i;playing=false;updatePlay();drawAt(t)});stageButtons.appendChild(b)});
-function updatePlay(){document.getElementById('play').textContent=playing?'Ⅱ 일시 정지':'▶ 재생';document.getElementById('play').classList.toggle('primary',!playing)}
-function loop(now){if(!playing){raf=0;return}if(!last)last=now;const dt=Math.min(50,now-last);last=now;t+=dt/1000*Number(document.getElementById('speed').value)/2.8;if(t>=D){t=D;playing=false;updatePlay()}drawAt(t);if(playing)raf=requestAnimationFrame(loop);else{last=0;raf=0}}
-document.getElementById('play').addEventListener('click',()=>{playing=!playing;updatePlay();if(playing){last=0;raf=requestAnimationFrame(loop)}else if(raf){cancelAnimationFrame(raf);raf=0;last=0}});
-document.getElementById('prev').addEventListener('click',()=>{playing=false;updatePlay();t=Math.max(0,Math.floor(t)-1);drawAt(t)});
-document.getElementById('next').addEventListener('click',()=>{playing=false;updatePlay();t=Math.min(D,Math.floor(t)+1);drawAt(t)});
-document.getElementById('restart').addEventListener('click',()=>{playing=false;updatePlay();t=0;drawAt(t)});
-document.getElementById('progress').addEventListener('input',e=>{playing=false;updatePlay();t=Number(e.target.value)/800*D;drawAt(t)});
-document.getElementById('labels').addEventListener('change',()=>drawAt(t));
-// Corrective note: this diagram illustrates the two divisions and crossover conceptually, not molecular-scale mechanics.
-drawAt(0);
+if($('labels').checked){const label=P[stage].title;txt(480,29,label,19,C.white,'middle',750);if(stage===2)txt(480,570,'상동 염색체 쌍이 적도면에 배열',12,C.muted);if(stage===3)txt(480,570,'X 모양 유지: 자매 염색 분체는 분리되지 않음',12,C.muted);if(stage===7)txt(480,590,'자매 염색 분체가 V자 형태로 각 극을 향해 이동',12,C.muted);}
+updateUI(u);
+}
+function updateUI(u){const idx=Math.min(N-1,Math.floor(u));const p=P[idx];$('phaseNo').textContent=`PHASE ${String(idx+1).padStart(2,'0')} / 09`;$('phaseTitle').textContent=p.title;$('phaseSummary').textContent=p.summary;$('explain').textContent=p.explain;$('keypoint').textContent=p.key;$('ploidy').textContent=p.ploidy;$('dna').textContent=p.dna;$('cells').textContent=p.cells;$('chromatids').textContent=p.chrom;$('progress').value=Math.round(u*1000);$('percent').textContent=Math.round(u/N*100)+'%';$('stageTime').textContent=(u*3).toFixed(1)+'초 · '+p.short;document.querySelectorAll('#stages button').forEach((b,i)=>b.classList.toggle('active',i===idx));}
+function pause(){playing=false;$('play').textContent='▶ 재생';$('play').classList.add('primary');if(raf)cancelAnimationFrame(raf);raf=0;last=0;}
+function loop(now){if(!playing)return;if(!last)last=now;const dt=Math.min(50,now-last);last=now;t+=dt/3000*Number($('speed').value);if(t>=N){t=N-.0001;pause();}draw(t);if(playing)raf=requestAnimationFrame(loop);}
+P.forEach((p,i)=>{const b=document.createElement('button');b.textContent=p.short;b.addEventListener('click',()=>{pause();t=i;draw(t)});$('stages').appendChild(b)});
+$('play').addEventListener('click',()=>{if(playing){pause();return}if(t>=N-.01)t=0;playing=true;$('play').textContent='Ⅱ 일시 정지';$('play').classList.remove('primary');last=0;raf=requestAnimationFrame(loop)});
+$('prev').addEventListener('click',()=>{pause();t=Math.max(0,Math.floor(t)-1);draw(t)});$('next').addEventListener('click',()=>{pause();t=Math.min(N-.0001,Math.floor(t)+1);draw(t)});$('restart').addEventListener('click',()=>{pause();t=0;draw(t)});$('progress').addEventListener('input',e=>{pause();t=Number(e.target.value)/1000;draw(t)});$('labels').addEventListener('change',()=>draw(t));draw(0);
 })();
 </script></body></html>
